@@ -1,0 +1,46 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="py-5 row justify-content-center">
+        <div class="text-center">
+            <h2>Sign Up</h2>
+        </div>
+
+        <div class="mt-5 col-md-6 col-lg-4">
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <input type="email" name="email" class="form-control" placeholder="Email" autofocus required
+                        id="id_email">
+                </div>
+
+                <div class="mb-3">
+                    <input type="password" name="password1" class="form-control" placeholder="Password"
+                        autocomplete="new-password" required id="id_password1">
+                    <span class="helptext form-text">{{ password1_help_text }}</span>
+                </div>
+
+                <div class="mb-3">
+                    <input type="password" name="password2" class="form-control" placeholder="Password confirmation"
+                        autocomplete="new-password" required id="id_password2">
+                    <span class="helptext form-text">Enter the same password as before, for verification.</span>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </div>
+            </form>
+
+            <hr>
+
+            <div class="d-grid">
+                <a href="{% url 'login' %}" class="btn btn-secondary">Go to login</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
