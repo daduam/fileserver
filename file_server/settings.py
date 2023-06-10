@@ -55,7 +55,7 @@ ROOT_URLCONF = "file_server.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -127,3 +127,6 @@ AUTH_USER_MODEL = "core.User"
 
 LOGIN_REDIRECT_URL = "core:feed"
 LOGOUT_REDIRECT_URL = "core:feed"
+
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
