@@ -1,17 +1,27 @@
+import mimetypes
+
+from django.contrib.auth.decorators import login_required
+from django.db.models import F, Q
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
-from django.views import generic
+from django.views.generic import CreateView, DetailView, ListView
 
 from .forms import SignUpForm
 from .mail import send_account_verification_mail
-from .models import User
+from .models import Document, User
 from .tokens import account_activation_token
 
 
-class SignUpView(generic.CreateView):
+class FeedView(ListView):
+    model = Document
+    template_name = "core/feed.html"
+
+
+class SignUpView(CreateView):
     form_class = SignUpForm
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
@@ -44,6 +54,23 @@ class SignUpView(generic.CreateView):
         )
 
 
+@method_decorator(login_required, name="dispatch")
+class SearchResultsView(ListView):
+    model = Document
+    template_name = "core/search_results.html"
+
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+        return Document.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        )
+
+
+@method_decorator(login_required, name="dispatch")
+class DocumentPreviewView(DetailView):
+    model = Document
+
+
 def activate_account(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
@@ -56,3 +83,14 @@ def activate_account(request, uidb64, token):
         user.save()
         return HttpResponseRedirect(reverse("login"))
     return HttpResponse("Activation link is invalid")
+
+
+@login_required
+def download_document(request, document_id):
+    document = get_object_or_404(Document, pk=document_id)
+    mime_type, _ = mimetypes.guess_type(document.file.name)
+    response = HttpResponse(document.file, content_type=mime_type)
+    response["Content-Disposition"] = f"attachment; filename={document.file.name}"
+    document.downloads = F("downloads") + 1
+    document.save()
+    return response

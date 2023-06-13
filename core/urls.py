@@ -1,12 +1,30 @@
 from django.urls import path
-from django.views.generic.base import TemplateView
 
-from .views import SignUpView, activate_account
+from core import views
 
 app_name = "core"
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="core/feed.html"), name="feed"),
-    path("signup/", SignUpView.as_view(), name="signup"),
-    path("activate/<uidb64>/<token>/", activate_account, name="activate"),
+    path("", views.FeedView.as_view(), name="feed"),
+    path("signup/", views.SignUpView.as_view(), name="signup"),
+    path(
+        "activate/<uidb64>/<token>/",
+        views.activate_account,
+        name="activate",
+    ),
+    path(
+        "documents/<int:document_id>/download/",
+        views.download_document,
+        name="download_document",
+    ),
+    path(
+        "documents/<pk>/preview/",
+        views.DocumentPreviewView.as_view(),
+        name="preview_document",
+    ),
+    path(
+        "search/",
+        views.SearchResultsView.as_view(),
+        name="search_results",
+    ),
 ]
