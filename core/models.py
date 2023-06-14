@@ -54,3 +54,27 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
+
+
+class Document(models.Model):
+    title = models.CharField(max_length=128)
+
+    description = models.CharField(max_length=256)
+
+    PDF = "pdf"
+    IMAGE = "image"
+    AUDIO = "audio"
+    VIDEO = "video"
+    FILETYPE_CHOICES = [
+        (PDF, "PDF"),
+        (IMAGE, "Image"),
+        (AUDIO, "Audio"),
+        (VIDEO, "Video"),
+    ]
+    filetype = models.CharField(max_length=5, choices=FILETYPE_CHOICES)
+
+    file = models.FileField(upload_to="%Y/%m/%d")
+
+    downloads = models.IntegerField(default=0)
+
+    emails = models.IntegerField(default=0)

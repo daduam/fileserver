@@ -27,15 +27,17 @@
                     <a class="nav-link" href="{% url 'login' %}">Login</a>
                 </li>
                 {% endif %}
-
             </ul>
-            <form class="d-flex" method=POST>
+            {% if user.is_authenticated %}
+            <form class="d-flex" method="GET" action="{% url 'core:search_results' %}">
+                <input name="q" class="form-control me-2" type="search" placeholder="Search files..."
+                    aria-label="Search">
+
                 {% csrf_token %}
 
-                <input class="form-control me-2" type="search" placeholder="Search Files" aria-label="Search"
-                    name="searched">
                 <button class="btn btn-outline-secondary" type="submit">Search</button>
             </form>
+            {% endif %}
         </div>
     </div>
 </nav>

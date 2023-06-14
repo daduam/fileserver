@@ -125,8 +125,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "core.User"
 
+LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "core:feed"
 LOGOUT_REDIRECT_URL = "core:feed"
 
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
