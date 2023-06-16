@@ -1,6 +1,7 @@
 import mimetypes
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import F, Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -10,8 +11,8 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic import CreateView, DetailView, ListView
 
-from .forms import SignUpForm
-from .mail import send_account_verification_mail
+from .forms import SendDocumentAttachmentForm, SignUpForm
+from .mail import send_account_verification_mail, send_file_attachment_to_email
 from .models import Document, User
 from .tokens import account_activation_token
 
@@ -94,3 +95,19 @@ def download_document(request, document_id):
     document.downloads = F("downloads") + 1
     document.save()
     return response
+
+
+@login_required
+def send_attachment(request, document_id):
+    if request.method != "POST":
+        return
+    form = SendDocumentAttachmentForm(request.POST)
+    if form.is_valid():
+        document = get_object_or_404(Document, pk=document_id)
+        email = form.cleaned_data.get("email")
+        send_file_attachment_to_email(request, email, document.file)
+        document.emails = F("emails") + 1
+        document.save()
+    return HttpResponseRedirect(
+        reverse("core:preview_document", kwargs={"pk": document_id})
+    )

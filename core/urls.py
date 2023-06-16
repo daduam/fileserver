@@ -23,6 +23,11 @@ urlpatterns = [
         name="preview_document",
     ),
     path(
+        "documents/<int:document_id>/send_attachment/",
+        views.send_attachment,
+        name="send_attachment",
+    ),
+    path(
         "search/",
         views.SearchResultsView.as_view(),
         name="search_results",

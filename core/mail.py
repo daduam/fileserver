@@ -1,3 +1,5 @@
+import mimetypes
+
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
@@ -19,4 +21,12 @@ def send_account_verification_mail(request, user, email):
         },
     )
     email = EmailMessage(subject, message, to=[email])
+    email.send()
+
+
+def send_file_attachment_to_email(request, email, file):
+    subject = "Document from file server website"
+    email = EmailMessage(subject=subject, body="", to=[email])
+    mimetype, _ = mimetypes.guess_type(file.name)
+    email.attach(filename=file.name, content=file.read(), mimetype=mimetype)
     email.send()
