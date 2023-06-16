@@ -10,3 +10,7 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("email", "password1", "password2")
+
+
+class SendDocumentAttachmentForm(forms.Form):
+    email = forms.EmailField(required=True)
