@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Documents</h1>
+
+        {% if user.is_authenticated and user.is_superuser %}
+        <div>
+            <a href="{% url 'admin:core_document_add' %}" class="btn btn-primary">Upload document</a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="mt-4 card">
+        <div class="list-group list-group-flush">
+            {% for doc in object_list %}
+            <div class="list-group-item">
+                <h6>
+                    <a href="{% url 'core:preview_document' doc.id %}">{{ doc.title }}</a>
+                    <span class="badge bg-secondary">{{ doc.filetype }}</span>
+                </h6>
+                <p>{{ doc.description }}</p>
+                <a href="{% url 'core:download_document' doc.id %}" class="btn btn-success">Download</a>
+            </div>
+            {% empty %}
+            <li class="list-group-item">No documents found.</li>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <p>You are not logged in</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}
