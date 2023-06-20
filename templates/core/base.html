@@ -17,6 +17,8 @@
     {% include 'core/navbar.html' %}
 
     <div class="container">
+        {% include 'core/flash_messages.html' %}
+
         {% block content %}
         {% endblock %}
     </div>
