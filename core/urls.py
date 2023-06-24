@@ -7,6 +7,7 @@ app_name = "core"
 urlpatterns = [
     path("", views.FeedView.as_view(), name="feed"),
     path("signup/", views.SignUpView.as_view(), name="signup"),
+    path("login/", views.LoginView.as_view(), name="login"),
     path(
         "activate/<uidb64>/<token>/",
         views.activate_account,

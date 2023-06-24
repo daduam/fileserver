@@ -1,7 +1,9 @@
 import mimetypes
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.views import LoginView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import F, Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -43,8 +45,12 @@ class SignUpView(CreateView):
         if form.is_valid():
             user = form.save()
             email = form.cleaned_data.get("email")
-            send_account_verification_mail(request, user, email)
-            return HttpResponseRedirect(reverse("login"))
+            if send_account_verification_mail(request, user, email):
+                messages.success(
+                    request,
+                    "Your account has been created successfully. Check your email for account activation link.",
+                )
+                return HttpResponseRedirect(reverse("login"))
         return render(
             request,
             self.template_name,
@@ -53,6 +59,10 @@ class SignUpView(CreateView):
                 "password1_help_text": form.fields["password1"].help_text,
             },
         )
+
+
+class LoginView(SuccessMessageMixin, LoginView):
+    success_message = "Welcome! You have successfully logged in."
 
 
 @method_decorator(login_required, name="dispatch")
@@ -105,9 +115,13 @@ def send_attachment(request, document_id):
     if form.is_valid():
         document = get_object_or_404(Document, pk=document_id)
         email = form.cleaned_data.get("email")
-        send_file_attachment_to_email(request, email, document.file)
-        document.emails = F("emails") + 1
-        document.save()
+        if send_file_attachment_to_email(request, email, document.file):
+            messages.success(
+                request,
+                "An email with the file attachment has been sent successfully to the provided email address.",
+            )
+            document.emails = F("emails") + 1
+            document.save()
     return HttpResponseRedirect(
         reverse("core:preview_document", kwargs={"pk": document_id})
     )
