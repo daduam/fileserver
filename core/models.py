@@ -73,7 +73,7 @@ class Document(models.Model):
     ]
     filetype = models.CharField(max_length=5, choices=FILETYPE_CHOICES)
 
-    file = models.FileField(upload_to="%Y/%m/%d")
+    file = models.FileField(upload_to="media/")
 
     downloads = models.IntegerField(default=0)
 
