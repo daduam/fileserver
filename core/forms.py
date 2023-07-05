@@ -14,3 +14,5 @@ class SignUpForm(UserCreationForm):
 
 class SendDocumentAttachmentForm(forms.Form):
     email = forms.EmailField(required=True)
+    subject = forms.CharField(required=False)
+    message = forms.CharField(required=False)

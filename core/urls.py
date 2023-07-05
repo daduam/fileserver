@@ -33,4 +33,9 @@ urlpatterns = [
         views.SearchResultsView.as_view(),
         name="search_results",
     ),
+    path(
+        "documents/<document_id>/show_pdf/",
+        views.show_pdf,
+        name="show_pdf",
+    ),
 ]
