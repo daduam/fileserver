@@ -24,9 +24,12 @@ def send_account_verification_mail(request, user, email):
     return email.send()
 
 
-def send_file_attachment_to_email(request, email, file):
-    subject = "Document from file server website"
-    email = EmailMessage(subject=subject, body="", to=[email])
+def send_file_attachment_to_email(request, email, file, subject=None, message=None):
+    if not subject:
+        subject = "Document from file server website"
+    if not message:
+        message = ""
+    email = EmailMessage(subject=subject, body=message, to=[email])
     mimetype, _ = mimetypes.guess_type(file.name)
     email.attach(filename=file.name, content=file.read(), mimetype=mimetype)
     return email.send()

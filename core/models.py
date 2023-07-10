@@ -78,3 +78,6 @@ class Document(models.Model):
     downloads = models.IntegerField(default=0)
 
     emails = models.IntegerField(default=0)
+
+    def __str__(self):
+        return "Document: {}".format(self.title)

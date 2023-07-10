@@ -22,7 +22,7 @@
 
     <div id="id_preview">
         {% if object.filetype == 'pdf' %}
-        <a href="{{ object.file.url }}">Show PDF</a>
+        <a href="{% url 'core:show_pdf' object.id %}">Show PDF</a>
         {% elif object.filetype == 'image' %}
         <img src="{{ object.file.url }}" class="img-fluid" alt="{{ object.title }}">
         {% elif object.filetype == 'audio' %}
@@ -66,9 +66,15 @@
             </div>
             {% endif %}
 
-            <div class="mb-3 col-md-6 col-lg-4">
-                <input type="email" name="email" class="form-control" placeholder="Recipient email"
+            <div class="col-md-6 col-lg-4">
+                <input type="email" name="email" class="form-control mb-3" placeholder="Recipient email"
                     autocapitalize="none" autocomplete="email" maxlength="254" required id="id_email">
+
+                <input type="text" name="subject" class="form-control mb-3" placeholder="Subject (optional)"
+                    autocapitalize="none" id="id_subject">
+
+                <textarea name="message" class="form-control mb-3" placeholder="Message (optional)" id="id_message"
+                    rows="3"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Send document attachment</button>

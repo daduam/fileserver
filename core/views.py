@@ -92,6 +92,10 @@ def activate_account(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
+        messages.success(
+            request,
+            "Your account has been verified successfully! You can now log in and start using our services.",
+        )
         return HttpResponseRedirect(reverse("login"))
     return HttpResponse("Activation link is invalid")
 
@@ -115,13 +119,26 @@ def send_attachment(request, document_id):
     if form.is_valid():
         document = get_object_or_404(Document, pk=document_id)
         email = form.cleaned_data.get("email")
-        if send_file_attachment_to_email(request, email, document.file):
+        subject = form.cleaned_data.get("subject")
+        message = form.cleaned_data.get("message")
+        if send_file_attachment_to_email(
+            request, email, document.file, subject, message
+        ):
             messages.success(
                 request,
                 "An email with the file attachment has been sent successfully to the provided email address.",
-            )
+            ),
             document.emails = F("emails") + 1
             document.save()
     return HttpResponseRedirect(
         reverse("core:preview_document", kwargs={"pk": document_id})
     )
+
+
+@login_required
+def show_pdf(request, document_id):
+    document = get_object_or_404(Document, pk=document_id)
+    response = HttpResponse(document.file.read(), content_type="application/pdf")
+    filename = document.file.name
+    response["Content-Disposition"] = f"inline; attachment; filename={filename}"
+    return response
